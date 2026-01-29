@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Tarefas</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f9; }
+        .card { background: white; border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .badge { background-color: #007bff; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85em; font-weight: bold; }
+        button { cursor: pointer; background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 5px; }
+        input { padding: 8px; width: 300px; border: 1px solid #ccc; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <h1>Minhas Tarefas</h1>
+    
+    <div style="margin-bottom: 20px;">
+        <input type="text" id="titulo" placeholder="O que você precisa fazer?">
+        <button onclick="criarTarefa()">Adicionar Tarefa</button>
+    </div>
+
+    <div id="lista-tarefas">Carregando...</div>
+
+    <script>
+        const API_URL = '/tasks'; // O seu Java atende aqui
+
+        async function carregarTarefas() {
+            const lista = document.getElementById('lista-tarefas');
+            try {
+                const resposta = await fetch(API_URL);
+                if (!resposta.ok) throw new Error("Erro ao buscar");
+                const tarefas = await resposta.json();
+                
+                lista.innerHTML = ''; 
+                tarefas.forEach(t => {
+                    // Aqui pegamos a prioridade que vem do Java
+                    const prioridade = t.prioridade || 'SEM PRIORIDADE';
+                    
+                    lista.innerHTML += `
+                        <div class="card">
+                            <h3>
+                                ${t.title} 
+                                <span class="badge">${prioridade}</span>
+                            </h3>
+                            <p>ID: ${t.id} | Status: ${t.status}</p>
+                        </div>
+                    `;
+                });
+            } catch (e) {
+                lista.innerHTML = '<p style="color:red">Erro ao carregar tarefas. Você está logado?</p>';
+            }
+        }
+
+        async function criarTarefa() {
+            const tituloInput = document.getElementById('titulo');
+            if (!tituloInput.value) return alert("Escreva um título!");
+
+            await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: tituloInput.value }) 
+            });
+
+            tituloInput.value = '';
+            carregarTarefas();
+        }
+
+        carregarTarefas();
+    </script>
+</body>
+</html>

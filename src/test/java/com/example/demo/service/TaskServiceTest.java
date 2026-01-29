@@ -1,75 +1,46 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.TaskCreateRequest;
-import com.example.demo.dto.TaskResponse;
-import com.example.demo.model.Task;
-import com.example.demo.repository.TaskRepository;
-
+import com.example.demo.model.LoginRequest;
+import com.example.demo.model.LoginResponse;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
-class TaskServiceTest {
+class LoginServiceTest {
 
-    @SuppressWarnings("null")
     @Test
-    void create_deveSalvarTaskERetornarResponse() {
+    void login_quandoCredenciaisCorretas_retornaSuccessTrue() {
         // Arrange
-        TaskRepository repo = mock(TaskRepository.class);
-        TaskService service = new TaskService(repo);
+        LoginService service = new LoginService();
 
-        TaskCreateRequest req = new TaskCreateRequest();
-        req.setTitle("Estudar testes");
-        req.setDescription("JUnit + Mockito");
-
-        // Simula o retorno do repo.save(...)
-        Task saved = new Task();
-        saved.setTitle(req.getTitle());
-        saved.setDescription(req.getDescription());
-
-        when(repo.save(any(Task.class))).thenReturn(saved);
+        LoginRequest req = new LoginRequest();
+        req.setUsername("roger");
+        req.setPassword("123456");
 
         // Act
-        TaskResponse resp = service.create(req);
+        LoginResponse resp = service.login(req);
 
-        // Assert: garante que chamou save com os dados certos
-        ArgumentCaptor<Task> captor = ArgumentCaptor.forClass(Task.class);
-        verify(repo, times(1)).save(captor.capture());
-
-        Task enviado = captor.getValue();
-        assertEquals("Estudar testes", enviado.getTitle());
-        assertEquals("JUnit + Mockito", enviado.getDescription());
-
-        // Assert: resposta
+        // Assert
         assertNotNull(resp);
-        assertEquals("Estudar testes", resp.getTitle());
-        assertEquals("JUnit + Mockito", resp.getDescription());
+        assertTrue(resp.isSuccess());
+        assertEquals("Login realizado com sucesso", resp.getMessage());
     }
 
     @Test
-    void list_deveRetornarListaDeResponses() {
-        TaskRepository repo = mock(TaskRepository.class);
-        TaskService service = new TaskService(repo);
+    void login_quandoCredenciaisIncorretas_retornaSuccessFalse() {
+        // Arrange
+        LoginService service = new LoginService();
 
-        Task t1 = new Task();
-        t1.setTitle("A");
-        t1.setDescription("Desc A");
+        LoginRequest req = new LoginRequest();
+        req.setUsername("roger");
+        req.setPassword("errada");
 
-        Task t2 = new Task();
-        t2.setTitle("B");
-        t2.setDescription("Desc B");
+        // Act
+        LoginResponse resp = service.login(req);
 
-        when(repo.findAll()).thenReturn(java.util.List.of(t1, t2));
-
-        var result = service.list();
-
-        assertEquals(2, result.size());
-        assertEquals("A", result.get(0).getTitle());
-        assertEquals("B", result.get(1).getTitle());
-        verify(repo, times(1)).findAll();
+        // Assert
+        assertNotNull(resp);
+        assertFalse(resp.isSuccess());
+        assertEquals("Username ou senha inválidos", resp.getMessage());
     }
-
 }

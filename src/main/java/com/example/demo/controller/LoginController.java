@@ -2,21 +2,21 @@ package com.example.demo.controller;
 
 import com.example.demo.model.LoginRequest;
 import com.example.demo.model.LoginResponse;
+import com.example.demo.service.LoginService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/login")
 public class LoginController {
 
+    private final LoginService loginService;
+
+    public LoginController(LoginService loginService) {
+        this.loginService = loginService;
+    }
+
     @PostMapping
     public LoginResponse login(@RequestBody LoginRequest request) {
-
-        if ("roger@email.com".equals(request.getEmail())
-                && "123456".equals(request.getSenha())) {
-
-            return new LoginResponse(true, "Login realizado com sucesso");
-        }
-
-        return new LoginResponse(false, "Email ou senha inválidos");
+        return loginService.login(request);
     }
 }

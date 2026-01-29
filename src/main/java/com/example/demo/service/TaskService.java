@@ -31,6 +31,6 @@ public class TaskService {
     }
 
     private TaskResponse toResponse(Task t) {
-        return new TaskResponse(t.getId(), t.getTitle(), t.getDescription(), t.getStatus(), t.getCreatedAt());
+        return new TaskResponse(t.getId(), t.getTitle(), t.getDescription(), t.getStatus(), t.getCreatedAt(), t.getPrioridade());
     }
 }

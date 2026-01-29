@@ -2,19 +2,19 @@ package com.example.demo.model;
 
 public class LoginResponse {
 
-    private boolean sucesso;
-    private String mensagem;
+    private boolean success;
+    private String message;
 
-    public LoginResponse(boolean sucesso, String mensagem) {
-        this.sucesso = sucesso;
-        this.mensagem = mensagem;
+    public LoginResponse(boolean success, String message) {
+        this.success = success;
+        this.message = message;
     }
 
-    public boolean isSucesso() {
-        return sucesso;
+    public boolean isSuccess() {
+        return success;
     }
 
-    public String getMensagem() {
-        return mensagem;
+    public String getMessage() {
+        return message;
     }
 }

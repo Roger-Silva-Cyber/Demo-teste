@@ -15,10 +15,15 @@ public class Task {
     @NotBlank
     @Column(nullable = false, length = 120)
     private String title;
+  
 
     @Column(length = 1000)
     private String description;
 
+    
+    private String prioridade = "URGENTE"; 
+
+    
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status = TaskStatus.TODO;
@@ -40,4 +45,7 @@ public class Task {
     public void setStatus(TaskStatus status) { this.status = status; }
 
     public Instant getCreatedAt() { return createdAt; }
+
+    public String getPrioridade() { return prioridade; }
+    public void setPrioridade(String prioridade) { this.prioridade = prioridade; }
 }
